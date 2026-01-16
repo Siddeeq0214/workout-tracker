@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,9 +16,24 @@ import { useWorkouts } from "../hooks/useWorkouts";
 import { getTotalVolume } from "../utils/calculations";
 import { COLORS, SIZES, SPACING, RADIUS } from "../constants/colors";
 
-export const HomeScreen = ({ navigation }) => {
+const VAULT_BOY_IMAGE = require ("../assets/images/fallout-vault-boy.png");
+
+export const HomeScreen = ({ navigation, route }) => {
   const { workouts, loading, addWorkout, removeWorkout } = useWorkouts();
   const [showForm, setShowForm] = useState(false);
+  const [activeSession, setActiveSession] = useState(null);
+
+  // Handle prefilled exercises from TaskScreen
+  useEffect(() => {
+    if (route.params?.prefillExercises) {
+      setShowForm(true);
+      setActiveSession({
+        name: route.params.routineName,
+        exercises: route.params.prefillExercises,
+        completed: []
+      });
+    }
+  }, [route.params]);
 
   const recentWorkouts = workouts.slice(0, 5);
   const totalWorkouts = workouts.length;
@@ -25,62 +41,79 @@ export const HomeScreen = ({ navigation }) => {
 
   const handleAddWorkout = (workout) => {
     addWorkout(workout);
-    setShowForm(false);
+    
+    if (activeSession) {
+      const remaining = activeSession.exercises.filter(e => e.toLowerCase() !== workout.exercise.toLowerCase());
+      if (remaining.length === 0) {
+        setActiveSession(null);
+        setShowForm(false);
+        alert("QUEST COMPLETE: EXERCISE GAINS ACHIEVED!");
+      } else {
+        setActiveSession({ ...activeSession, exercises: remaining });
+      }
+    } else {
+      setShowForm(false);
+    }
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>LOADING DATA FROM VAULT-TEC...</Text>
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      {/* Scanline Effect Overlay */}
+      <View style={styles.scanline} pointerEvents="none" />
+      
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <View>
+          <View style={styles.headerInfo}>
             <View style={styles.titleRow}>
-              <Ionicons name="barbell" size={32} color={COLORS.primary} />
-              <Text style={styles.title}>FitTrack</Text>
+              <Text style={styles.title}>[ PIP-BOY 3000 ]</Text>
             </View>
-            <Text style={styles.subtitle}>
-              Your fitness journey starts here
-            </Text>
+            <Text style={styles.terminalUser}>USER: SIDDEEQ</Text>
+            <Text style={styles.subtitle}>STATUS: STRUGGLING</Text>
           </View>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => setShowForm(!showForm)}
-          >
-            <Ionicons
-              name={showForm ? "close" : "add"}
-              size={28}
-              color={COLORS.white}
-            />
-          </TouchableOpacity>
+          <Image 
+            source={VAULT_BOY_IMAGE} 
+            style={styles.vaultBoyHeader} 
+          />
         </View>
 
-        {/* Stats Overview */}
+        {/* S.P.E.C.I.A.L. Stats Overview */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>[ CURRENT STATISTICS ]</Text>
+        </View>
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
-            <View style={styles.statIconRow}>
-              <Ionicons name="bar-chart" size={20} color={COLORS.primary} />
-              <Text style={styles.statLabel}>Total Workouts</Text>
-            </View>
-            <Text style={styles.statValue}>{totalWorkouts}</Text>
+            <Text style={styles.statLabel}>TRAINING SESSIONS</Text>
+            <Text style={styles.statValue}>{totalWorkouts.toString().padStart(2, '0')}</Text>
           </View>
           <View style={styles.statCard}>
-            <View style={styles.statIconRow}>
-              <Ionicons name="trending-up" size={20} color={COLORS.secondary} />
-              <Text style={styles.statLabel}>Total Volume</Text>
-            </View>
+            <Text style={styles.statLabel}>TOTAL LIFT VOLUME</Text>
             <Text style={styles.statValue}>
-              {(totalVolume / 1000).toFixed(1)}k
+              {(totalVolume / 1000).toFixed(1)}K
             </Text>
-            <Text style={styles.statUnit}>lbs</Text>
+            <Text style={styles.statUnit}>LBS</Text>
           </View>
+        </View>
+
+        {/* Terminal Controls */}
+        <View style={styles.controlsContainer}>
+          <TouchableOpacity
+            style={[styles.terminalButton, showForm ]}
+            onPress={() => setShowForm(!showForm)}
+          >
+            <Text style={styles.terminalButtonText}>
+              {showForm ? "> ABORT LOGGING" : "> INITIATE LOGGING SEQUENCE"}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Add Form */}
@@ -93,30 +126,22 @@ export const HomeScreen = ({ navigation }) => {
           </View>
         )}
 
-        {/* Recent Workouts */}
+        {/* Mission History */}
         <View style={styles.workoutsContainer}>
           <View style={styles.sectionHeader}>
-            <View style={styles.sectionTitleRow}>
-              <Ionicons name="calendar" size={24} color={COLORS.primary} />
-              <Text style={styles.sectionTitle}>Recent Workouts</Text>
-            </View>
+            <Text style={styles.sectionTitle}>[ RECENT MISSION LOGS ]</Text>
             {workouts.length > 5 && (
               <TouchableOpacity onPress={() => navigation.navigate("History")}>
-                <Text style={styles.viewAllText}>View All</Text>
+                <Text style={styles.viewAllText}>VERIFY ALL ARCHIVES</Text>
               </TouchableOpacity>
             )}
           </View>
 
           {recentWorkouts.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons
-                name="barbell-outline"
-                size={64}
-                color={COLORS.border}
-              />
-              <Text style={styles.emptyTitle}>No workouts yet</Text>
+              <Text style={styles.emptyTitle}>NO ARCHIVES FOUND</Text>
               <Text style={styles.emptySubtitle}>
-                Tap the + button to log your first workout
+                COMMENCE TRAINING TO GENERATE LOGS
               </Text>
             </View>
           ) : (
@@ -139,11 +164,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scanline: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 255, 65, 0.03)',
+    zIndex: 999,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.background,
+  },
+  loadingText: {
+    color: COLORS.primary,
+    marginTop: SPACING.md,
+    fontSize: SIZES.sm,
+    fontWeight: 'bold',
   },
   header: {
     flexDirection: "row",
@@ -151,34 +191,51 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.lg,
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.primary,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
   },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
+  headerInfo: {
+    flex: 1,
   },
   title: {
-    fontSize: SIZES.xxxl,
-    fontWeight: "700",
-    color: COLORS.text,
+    fontSize: SIZES.xl,
+    fontWeight: "bold",
+    color: COLORS.primary,
+    letterSpacing: 2,
+  },
+  terminalUser: {
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
+    marginTop: SPACING.xs,
+    opacity: 0.8,
   },
   subtitle: {
-    fontSize: SIZES.md,
-    color: COLORS.textLight,
-    marginTop: SPACING.xs,
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
+    marginTop: 2,
+    fontWeight: 'bold',
   },
-  addButton: {
-    backgroundColor: COLORS.primary,
-    width: 56,
-    height: 56,
-    borderRadius: RADIUS.full,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+  vaultBoyHeader: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
+  },
+  sectionHeader: {
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: SIZES.md,
+    fontWeight: "bold",
+    color: COLORS.primary,
+    letterSpacing: 1,
   },
   statsContainer: {
     flexDirection: "row",
@@ -188,82 +245,81 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
-    padding: SPACING.lg,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  statIconRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.xs,
-    marginBottom: SPACING.sm,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
+    padding: SPACING.md,
   },
   statLabel: {
-    fontSize: SIZES.sm,
+    fontSize: SIZES.xs,
     fontWeight: "600",
-    color: COLORS.textLight,
+    color: COLORS.primary,
+    opacity: 0.7,
+    marginBottom: SPACING.xs,
   },
   statValue: {
-    fontSize: SIZES.xxxl,
-    fontWeight: "700",
-    color: COLORS.text,
+    fontSize: SIZES.xxl,
+    fontWeight: "bold",
+    color: COLORS.primary,
   },
   statUnit: {
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
+    marginTop: -4,
+  },
+  controlsContainer: {
+    paddingHorizontal: SPACING.xl,
+    marginBottom: SPACING.lg,
+  },
+  terminalButton: {
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    padding: SPACING.md,
+    borderRadius: RADIUS.sm,
+    alignItems: 'flex-start',
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
+  },
+  terminalButtonText: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
     fontSize: SIZES.sm,
-    color: COLORS.textLight,
-    marginTop: 2,
   },
   formContainer: {
     paddingHorizontal: SPACING.xl,
     marginBottom: SPACING.xl,
   },
   workoutsContainer: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: RADIUS.xl,
-    borderTopRightRadius: RADIUS.xl,
+    borderTopWidth: 2,
+    borderTopColor: COLORS.primary,
     padding: SPACING.xl,
     minHeight: 400,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: SPACING.lg,
-  },
-  sectionTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACING.sm,
-  },
-  sectionTitle: {
-    fontSize: SIZES.xl,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
   viewAllText: {
-    fontSize: SIZES.sm,
-    fontWeight: "600",
+    fontSize: SIZES.xs,
+    fontWeight: "bold",
     color: COLORS.primary,
+    textDecorationLine: 'underline',
   },
   emptyState: {
     alignItems: "center",
-    paddingVertical: SPACING.xxxl * 2,
+    paddingVertical: SPACING.xxxl,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.md,
+    marginTop: SPACING.md,
   },
   emptyTitle: {
-    fontSize: SIZES.xl,
-    fontWeight: "600",
-    color: COLORS.textLight,
-    marginTop: SPACING.lg,
+    fontSize: SIZES.md,
+    fontWeight: "bold",
+    color: COLORS.primary,
   },
   emptySubtitle: {
-    fontSize: SIZES.md,
-    color: COLORS.textLighter,
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
     marginTop: SPACING.sm,
     textAlign: "center",
+    opacity: 0.7,
   },
 });

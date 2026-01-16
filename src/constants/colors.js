@@ -1,20 +1,20 @@
 export const COLORS = {
-  primary: '#6366F1',
-  primaryDark: '#4F46E5',
-  secondary: '#A855F7',
-  secondaryDark: '#9333EA',
-  background: '#F8FAFC',
-  white: '#FFFFFF',
-  text: '#1F2937',
-  textLight: '#6B7280',
-  textLighter: '#9CA3AF',
-  border: '#E5E7EB',
-  success: '#10B981',
-  danger: '#EF4444',
-  warning: '#F59E0B',
-  cardBg: '#FFFFFF',
-  gradient1: '#6366F1',
-  gradient2: '#A855F7',
+  primary: '#00FF41',      // Pip-Boy Green
+  primaryDark: '#003B00',  // Deep Terminal Green
+  secondary: '#FFB642',    // Amber highlight
+  secondaryDark: '#C78C06',
+  background: '#041207',   // Terminal background
+  white: '#00FF41',        // Text should also be green by default
+  text: '#00FF41',
+  textLight: '#008F11',
+  textLighter: '#003B00',
+  border: '#008F11',
+  success: '#00FF41',
+  danger: '#FF0000',
+  warning: '#FFB642',
+  cardBg: '#081C0D',
+  gradient1: '#00FF41',
+  gradient2: '#008F11',
 };
 
 export const SIZES = {
@@ -39,9 +39,9 @@ export const SPACING = {
 };
 
 export const RADIUS = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
+  sm: 4,   // Sharper corners for a rugged look
+  md: 6,
+  lg: 8,
+  xl: 12,
   full: 9999,
 };

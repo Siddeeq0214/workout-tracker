@@ -40,9 +40,33 @@ export const StorageService = {
     async clearAll() {
         try {
             await AsyncStorage.removeItem(STORAGE_KEY);
+            await AsyncStorage.removeItem('@workout_sessions');
             return true;
         } catch (error) {
             console.error('Error clearing workouts: ', error);
+            throw error;
+        }
+    },
+
+    // Session Management
+    async saveSession(session) {
+        try {
+            const sessions = await this.getSessions();
+            const updatedSessions = [session, ...sessions];
+            await AsyncStorage.setItem('@workout_sessions', JSON.stringify(updatedSessions));
+            return session;
+        } catch (error) {
+            console.error('Error saving session: ', error);
+            throw error;
+        }
+    },
+
+    async getSessions() {
+        try {
+            const data = await AsyncStorage.getItem('@workout_sessions');
+            return data ? JSON.parse(data) : [];
+        } catch (error) {
+            console.error('Error getting sessions: ', error);
             throw error;
         }
     }

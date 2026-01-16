@@ -5,32 +5,58 @@ import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
 import { formatDate } from '../utils/calculations';
 
 export const WorkoutCard = ({ workout, onDelete }) => {
+  const isMultiSet = Array.isArray(workout.sets);
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.mainInfo}>
-          <Text style={styles.exercise}>{workout.exercise}</Text>
+          <Text style={styles.exercise}>[ {workout.exercise.toUpperCase()} ]</Text>
+          
           <View style={styles.statsRow}>
-            <Text style={styles.statText}>{workout.sets} sets</Text>
-            <Text style={styles.separator}>×</Text>
-            <Text style={styles.statText}>{workout.reps} reps</Text>
-            <Text style={styles.separator}>@</Text>
-            <Text style={styles.weight}>{workout.weight} lbs</Text>
+            {isMultiSet ? (
+              <>
+                <Text style={styles.statText}>{workout.sets.length.toString().padStart(2, '0')} UNITS</Text>
+                <Text style={styles.separator}>::</Text>
+                <Text style={styles.statText}>MAX {workout.maxWeight} LBS</Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.statText}>{workout.sets} UNITS</Text>
+                <Text style={styles.separator}>×</Text>
+                <Text style={styles.statText}>{workout.reps} REPS</Text>
+                <Text style={styles.separator}>@</Text>
+                <Text style={styles.weight}>{workout.weight} LBS</Text>
+              </>
+            )}
           </View>
+
+          {isMultiSet && (
+            <View style={styles.setsList}>
+              {workout.sets.map((set, idx) => (
+                <View key={idx} style={styles.setChip}>
+                  <Text style={styles.setChipText}>
+                    {set.reps} × {set.weight}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
+
           <View style={styles.dateRow}>
             <Ionicons
-              name="time-outline"
-              size={16}
-              color={COLORS.textLighter}
+              name="radio-outline"
+              size={14}
+              color={COLORS.primary}
             />
-            <Text style={styles.date}>{formatDate(workout.date)}</Text>
+            <Text style={styles.date}>LOG_DATE: {formatDate(workout.date).toUpperCase()}</Text>
           </View>
         </View>
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={() => onDelete(workout.id)}
         >
-          <Ionicons name="trash-outline" size={24} color={COLORS.danger} />
+          <Ionicons name="trash" size={20} color={COLORS.primary} />
         </TouchableOpacity>
       </View>
     </View>
@@ -39,17 +65,12 @@ export const WorkoutCard = ({ workout, onDelete }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.cardBg,
-    borderRadius: RADIUS.lg,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderRadius: RADIUS.sm,
     padding: SPACING.lg,
     marginBottom: SPACING.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.primary,
   },
   content: {
     flexDirection: 'row',
@@ -60,41 +81,71 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   exercise: {
-    fontSize: SIZES.lg,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
     marginBottom: SPACING.sm,
+    letterSpacing: 1,
   },
   statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.md,
   },
   statText: {
-    fontSize: SIZES.md,
-    color: COLORS.textLight,
-    fontWeight: '600',
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
+    fontWeight: 'bold',
+    opacity: 0.9,
   },
   separator: {
-    fontSize: SIZES.md,
-    color: COLORS.textLighter,
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
+    opacity: 0.5,
   },
   weight: {
-    fontSize: SIZES.md,
+    fontSize: SIZES.xs,
     color: COLORS.primary,
-    fontWeight: '700',
+    fontWeight: 'bold',
   },
   dateRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.xs,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 255, 65, 0.2)',
+    paddingTop: SPACING.sm,
   },
   date: {
-    fontSize: SIZES.sm,
-    color: COLORS.textLighter,
+    fontSize: 10,
+    color: COLORS.primary,
+    opacity: 0.6,
+    fontWeight: 'bold',
   },
   deleteButton: {
-    padding: SPACING.sm,
+    padding: SPACING.xs,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
+  },
+  setsList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.xs,
+    marginBottom: SPACING.md,
+  },
+  setChip: {
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.3)',
+  },
+  setChipText: {
+    fontSize: 10,
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
 });

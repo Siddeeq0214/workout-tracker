@@ -3,32 +3,45 @@ import {StorageService} from '../services/storage';
 
 export const useWorkouts = () => {
     const [workouts, setWorkouts] = useState([]);
+    const [sessions, setSessions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const loadWorkouts = useCallback(async () => {
+    const loadData = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await StorageService.getWorkouts();
-            setWorkouts(data);
+            const [workoutData, sessionData] = await Promise.all([
+                StorageService.getWorkouts(),
+                StorageService.getSessions()
+            ]);
+            setWorkouts(workoutData);
+            setSessions(sessionData);
             setError(null);
-        }catch (err){
+        } catch (err) {
             setError(err.message);
-
-        }finally {
+        } finally {
             setLoading(false);
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
-        loadWorkouts();
-    }, [loadWorkouts]);
+        loadData();
+    }, [loadData]);
 
     const addWorkout = async (workout) => {
         try {
             await StorageService.saveWorkout(workout);
-            await loadWorkouts();
-        } catch (err){
+            await loadData();
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const addSession = async (session) => {
+        try {
+            await StorageService.saveSession(session);
+            await loadData();
+        } catch (err) {
             setError(err.message);
         }
     };
@@ -36,28 +49,27 @@ export const useWorkouts = () => {
     const removeWorkout = async (id) => {
         try {
             await StorageService.deleteWorkout(id);
-            await loadWorkouts();
-        } catch (err){
+            await loadData();
+        } catch (err) {
             setError(err.message);
         }
     };
 
-    const clearAllWorkout = async () => {
-        try {
-            await StorageService.clearAll();
-            await loadWorkouts();
-        } catch (err){
-            setError(err.message);
-        }
+    const getExerciseHistory = (exerciseName) => {
+        return workouts
+            .filter(w => w.exercise.toLowerCase() === exerciseName.toLowerCase())
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
     };
 
     return {
         workouts,
+        sessions,
         loading,
         error,
         addWorkout,
+        addSession,
         removeWorkout,
-        clearAllWorkout,
-        refreshWorkouts: loadWorkouts,
+        getExerciseHistory,
+        refreshData: loadData,
     };
 };

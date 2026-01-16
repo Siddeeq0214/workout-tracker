@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ProgressScreen } from '../screens/ProgressScreen';
 import { HistoryScreen } from '../screens/HistoryScreen';
-import {TaskScreen} from '../screens/TaskScreen';
+import { TaskScreen } from '../screens/TaskScreen';
 import { COLORS } from '../constants/colors';
 
 const Tab = createBottomTabNavigator();
@@ -17,37 +17,39 @@ export default function AppNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Progress') {
-            iconName = focused ? 'trending-up' : 'trending-up-outline';
-          } else if (route.name === 'History') {
-            iconName = focused ? 'calendar' : 'calendar-outline';
-          }else if (route.name === 'Task') {
-            iconName = focused ? 'add' : 'add-outline';
+          if (route.name === 'STATUS') {
+            iconName = focused ? 'terminal' : 'terminal-outline';
+          } else if (route.name === 'DATA') {
+            iconName = focused ? 'pulse' : 'pulse-outline';
+          } else if (route.name === 'ARCHIVE') {
+            iconName = focused ? 'library' : 'library-outline';
+          }else if (route.name === 'QUESTS') {
+            iconName = focused ? 'list' : 'list-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textLighter,
+        tabBarInactiveTintColor: 'rgba(0, 255, 65, 0.3)',
         tabBarStyle: {
+          backgroundColor: '#041207',
           paddingBottom: 8,
           paddingTop: 8,
           height: 60,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.border,
+          borderTopWidth: 2,
+          borderTopColor: COLORS.primary,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
+          fontSize: 10,
+          fontWeight: 'bold',
+          letterSpacing: 1,
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Progress" component={ProgressScreen} />
-      <Tab.Screen name="History" component={HistoryScreen} />
-      <Tab.Screen name="Task" component={TaskScreen} />
+      <Tab.Screen name="STATUS" component={HomeScreen} />
+      <Tab.Screen name="DATA" component={ProgressScreen} />
+      <Tab.Screen name="ARCHIVE" component={HistoryScreen} />
+      <Tab.Screen name="QUESTS" component={TaskScreen} />
     </Tab.Navigator>
   );
 }

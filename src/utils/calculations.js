@@ -5,12 +5,26 @@ export const calculateStats = (workouts, exerciseName) => {
 
     if (filtered.length === 0) return null;
 
-    const maxWeight = Math.max(...filtered.map(w => w.weight));
-    const totalVolume = filtered.reduce(
-        (sum, w) => sum + (w.sets * w.reps * w.weight), 0
-    );
+    const maxWeight = Math.max(...filtered.map(w => {
+        if (Array.isArray(w.sets)) {
+            return Math.max(...w.sets.map(s => s.weight));
+        }
+        return w.weight;
+    }));
 
-    const avgWeight = filtered.reduce((sum, w) => sum + w.weight, 0) / filtered.length;
+    const totalVolume = filtered.reduce((sum, w) => {
+        if (Array.isArray(w.sets)) {
+            return sum + w.sets.reduce((setSum, s) => setSum + (s.reps * s.weight), 0);
+        }
+        return sum + (w.sets * w.reps * w.weight);
+    }, 0);
+
+    const avgWeight = totalVolume / filtered.reduce((sum, w) => {
+        if (Array.isArray(w.sets)) {
+            return sum + w.sets.reduce((setSum, s) => setSum + s.reps, 0);
+        }
+        return sum + (w.sets * w.reps);
+    }, 0);
 
     return {
         maxWeight,
@@ -32,9 +46,37 @@ export const getWorkoutsByDateRange = (workouts, startDate, endDate) => {
 };
 
 export const getTotalVolume = (workouts) => {
-    return workouts.reduce(
-        (sum, w) => sum + (w.sets * w.reps * w.weight), 0
-    );
+    return workouts.reduce((sum, w) => {
+        if (Array.isArray(w.sets)) {
+            return sum + w.sets.reduce((setSum, s) => setSum + (s.reps * s.weight), 0);
+        }
+        return sum + (w.sets * (w.reps || 0) * (w.weight || 0));
+    }, 0);
+};
+
+export const getChartData = (workouts, exerciseName) => {
+    const filtered = workouts
+        .filter(w => w.exercise.toLowerCase() === exerciseName.toLowerCase())
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (filtered.length === 0) return null;
+
+    return {
+        labels: filtered.map(w => {
+            const date = new Date(w.date);
+            return `${date.getMonth() + 1}/${date.getDate()}`;
+        }),
+        datasets: [
+            {
+                data: filtered.map(w => {
+                    if (Array.isArray(w.sets)) {
+                        return Math.max(...w.sets.map(s => s.weight));
+                    }
+                    return w.weight;
+                })
+            }
+        ]
+    };
 };
 
 export const formatDate = (dateString) => {

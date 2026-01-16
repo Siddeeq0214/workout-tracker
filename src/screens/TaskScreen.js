@@ -18,28 +18,25 @@ import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
 
 const TASKS_STORAGE_KEY = '@workout_tasks';
 
+// Redesigned TaskScreen
 export const TaskScreen = ({ navigation }) => {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
 
-  // Form state
   const [formData, setFormData] = useState({
     title: '',
     exercises: '',
-    // date: new Date().toISOString().split('T')[0],
-    // time: '06:00',
+    date: new Date().toISOString().split('T')[0],
     difficulty: 'medium',
     notes: '',
   });
 
-  // Load tasks on mount
   useEffect(() => {
     loadTasks();
   }, []);
 
-  // Save tasks whenever they change
   useEffect(() => {
     saveTasks();
   }, [tasks]);
@@ -65,7 +62,7 @@ export const TaskScreen = ({ navigation }) => {
 
   const handleAddTask = () => {
     if (!formData.title.trim()) {
-      Alert.alert('Error', 'Please enter a task title');
+      Alert.alert('VAULT_ALERT', 'ENTER MISSION TITLE');
       return;
     }
 
@@ -75,7 +72,7 @@ export const TaskScreen = ({ navigation }) => {
       .filter(e => e);
 
     if (exercisesList.length === 0) {
-      Alert.alert('Error', 'Please enter at least one exercise');
+      Alert.alert('VAULT_ALERT', 'ENTER AT LEAST ONE OBJECTIVE');
       return;
     }
 
@@ -83,8 +80,7 @@ export const TaskScreen = ({ navigation }) => {
       id: Date.now(),
       title: formData.title.trim(),
       exercises: exercisesList,
-      // date: formData.date,
-      // time: formData.time,
+      date: formData.date,
       difficulty: formData.difficulty,
       notes: formData.notes.trim(),
       completed: false,
@@ -106,8 +102,7 @@ export const TaskScreen = ({ navigation }) => {
     setFormData({
       title: '',
       exercises: '',
-      // date: new Date().toISOString().split('T')[0],
-      // time: '06:00',
+      date: new Date().toISOString().split('T')[0],
       difficulty: 'medium',
       notes: '',
     });
@@ -118,8 +113,7 @@ export const TaskScreen = ({ navigation }) => {
     setFormData({
       title: task.title,
       exercises: task.exercises.join(', '),
-      // date: task.date,
-      // time: task.time,
+      date: task.date,
       difficulty: task.difficulty,
       notes: task.notes || '',
     });
@@ -128,12 +122,12 @@ export const TaskScreen = ({ navigation }) => {
 
   const handleDeleteTask = (id) => {
     Alert.alert(
-      'Delete Task',
-      'Are you sure you want to delete this task?',
+      'MISSION_ABORT',
+      'PURGE THIS DATA FROM THE ARCHIVE?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: 'CANCEL', style: 'cancel' },
         {
-          text: 'Delete',
+          text: 'PURGE',
           style: 'destructive',
           onPress: () => setTasks(tasks.filter(t => t.id !== id)),
         },
@@ -147,10 +141,10 @@ export const TaskScreen = ({ navigation }) => {
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'easy': return { bg: '#D1FAE5', text: COLORS.success };
-      case 'medium': return { bg: '#FEF3C7', text: COLORS.warning };
-      case 'hard': return { bg: '#FEE2E2', text: COLORS.danger };
-      default: return { bg: COLORS.border, text: COLORS.textLight };
+      case 'easy': return { bg: 'rgba(0, 255, 65, 0.1)', text: COLORS.primary };
+      case 'medium': return { bg: 'rgba(255, 182, 66, 0.1)', text: COLORS.warning };
+      case 'hard': return { bg: 'rgba(255, 0, 0, 0.1)', text: COLORS.danger };
+      default: return { bg: 'rgba(0, 255, 65, 0.05)', text: COLORS.primary };
     }
   };
 
@@ -165,14 +159,14 @@ export const TaskScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.scanline} pointerEvents="none" />
       {/* Header */}
       <View style={styles.header}>
         <View>
           <View style={styles.titleRow}>
-            <Ionicons name="calendar" size={32} color={COLORS.primary} />
-            <Text style={styles.title}>Workout Tasks</Text>
+            <Text style={styles.title}>[ QUEST_LOG ]</Text>
           </View>
-          <Text style={styles.subtitle}>Plan and track your routines</Text>
+          <Text style={styles.subtitle}>ACTIVE MISSION PARAMETERS</Text>
         </View>
         <TouchableOpacity
           style={styles.addButton}
@@ -182,7 +176,7 @@ export const TaskScreen = ({ navigation }) => {
             setShowAddModal(true);
           }}
         >
-          <Ionicons name="add" size={28} color={COLORS.white} />
+          <Ionicons name="add" size={28} color={COLORS.primary} />
         </TouchableOpacity>
       </View>
 
@@ -190,25 +184,16 @@ export const TaskScreen = ({ navigation }) => {
         {/* Stats Cards */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
-            <View style={styles.statIconRow}>
-              <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
-              <Text style={styles.statLabel}>Total</Text>
-            </View>
-            <Text style={styles.statValue}>{tasks.length}</Text>
+            <Text style={styles.statLabel}>TOTAL</Text>
+            <Text style={styles.statValue}>{tasks.length.toString().padStart(2, '0')}</Text>
           </View>
           <View style={styles.statCard}>
-            <View style={styles.statIconRow}>
-              <Ionicons name="time-outline" size={20} color={COLORS.warning} />
-              <Text style={styles.statLabel}>Pending</Text>
-            </View>
-            <Text style={styles.statValue}>{pendingCount}</Text>
+            <Text style={styles.statLabel}>ACTIVE</Text>
+            <Text style={styles.statValue}>{pendingCount.toString().padStart(2, '0')}</Text>
           </View>
           <View style={styles.statCard}>
-            <View style={styles.statIconRow}>
-              <Ionicons name="checkmark-circle" size={20} color={COLORS.success} />
-              <Text style={styles.statLabel}>Done</Text>
-            </View>
-            <Text style={styles.statValue}>{completedCount}</Text>
+            <Text style={styles.statLabel}>DONE</Text>
+            <Text style={styles.statValue}>{completedCount.toString().padStart(2, '0')}</Text>
           </View>
         </View>
 
@@ -219,23 +204,23 @@ export const TaskScreen = ({ navigation }) => {
             onPress={() => setFilter('all')}
           >
             <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
-              All
+              {">> ALL"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.filterButton, filter === 'pending' && styles.filterButtonActivePending]}
+            style={[styles.filterButton, filter === 'pending' && styles.filterButtonActive]}
             onPress={() => setFilter('pending')}
           >
             <Text style={[styles.filterText, filter === 'pending' && styles.filterTextActive]}>
-              Pending
+              {">> PENDING"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.filterButton, filter === 'completed' && styles.filterButtonActiveCompleted]}
+            style={[styles.filterButton, filter === 'completed' && styles.filterButtonActive]}
             onPress={() => setFilter('completed')}
           >
             <Text style={[styles.filterText, filter === 'completed' && styles.filterTextActive]}>
-              Completed
+              {">> DONE"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -244,10 +229,9 @@ export const TaskScreen = ({ navigation }) => {
         <View style={styles.taskList}>
           {filteredTasks.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="barbell-outline" size={64} color={COLORS.border} />
-              <Text style={styles.emptyText}>No tasks found</Text>
+              <Text style={styles.emptyText}>NO ACTIVE QUESTS</Text>
               <Text style={styles.emptySubtext}>
-                Create a workout task to get started
+                CONSULT OVERSEER FOR NEW DIRECTIVES
               </Text>
             </View>
           ) : (
@@ -269,7 +253,7 @@ export const TaskScreen = ({ navigation }) => {
       {/* Add/Edit Task Modal */}
       <Modal
         visible={showAddModal}
-        animationType="slide"
+        animationType="none"
         transparent={true}
         onRequestClose={() => setShowAddModal(false)}
       >
@@ -277,72 +261,58 @@ export const TaskScreen = ({ navigation }) => {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>
-                {editingTask ? 'Edit Task' : 'Create Workout Task'}
+                [ {editingTask ? 'MODIFY_QUEST' : 'NEW_DIRECTIVE'} ]
               </Text>
               <TouchableOpacity onPress={() => {
                 setShowAddModal(false);
                 setEditingTask(null);
                 resetForm();
               }}>
-                <Ionicons name="close" size={28} color={COLORS.text} />
+                <Ionicons name="close" size={28} color={COLORS.primary} />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={styles.modalBody}>
-                {/* Title */}
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Task Title *</Text>
+                  <Text style={styles.inputLabel}>QUEST_TITLE</Text>
                   <TextInput
                     style={styles.input}
                     value={formData.title}
                     onChangeText={(text) => setFormData({ ...formData, title: text })}
-                    placeholder="e.g., Upper Body Workout"
-                    placeholderTextColor={COLORS.textLighter}
+                    placeholder="ENTER MISSION NAME..."
+                    placeholderTextColor="rgba(0, 255, 65, 0.3)"
                   />
                 </View>
 
-                {/* Exercises */}
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Exercises (comma separated) *</Text>
+                  <Text style={styles.inputLabel}>OBJECTIVES_LIST (COMMA_SEP)</Text>
                   <TextInput
                     style={[styles.input, styles.textArea]}
                     value={formData.exercises}
                     onChangeText={(text) => setFormData({ ...formData, exercises: text })}
-                    placeholder="Bench Press, Squats, Deadlifts"
-                    placeholderTextColor={COLORS.textLighter}
+                    placeholder="SQUATS, BENCH, DEAD..."
+                    placeholderTextColor="rgba(0, 255, 65, 0.3)"
                     multiline
                     numberOfLines={3}
                   />
                 </View>
 
-                {/* Date and Time */}
                 <View style={styles.row}>
                   <View style={[styles.inputGroup, styles.flex1]}>
-                    <Text style={styles.inputLabel}>Date</Text>
+                    <Text style={styles.inputLabel}>DEPLOY_DATE</Text>
                     <TextInput
                       style={styles.input}
                       value={formData.date}
                       onChangeText={(text) => setFormData({ ...formData, date: text })}
                       placeholder="YYYY-MM-DD"
-                      placeholderTextColor={COLORS.textLighter}
+                      placeholderTextColor="rgba(0, 255, 65, 0.3)"
                     />
                   </View>
-                  {/* <View style={[styles.inputGroup, styles.flex1]}>
-                    <Text style={styles.inputLabel}>Time</Text>
-                    <TextInput
-                      style={styles.input}
-                      value={formData.time}
-                      onChangeText={(text) => setFormData({ ...formData, time: text })}
-                      placeholder="HH:MM"
-                      placeholderTextColor={COLORS.textLighter}
-                    />
-                  </View> */}
                 </View>
 
-                {/* Difficulty */}
                 <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Difficulty</Text>
+                  <Text style={styles.inputLabel}>THREAT_LEVEL</Text>
                   <View style={styles.difficultyButtons}>
                     {['easy', 'medium', 'hard'].map(level => (
                       <TouchableOpacity
@@ -350,7 +320,7 @@ export const TaskScreen = ({ navigation }) => {
                         style={[
                           styles.difficultyButton,
                           formData.difficulty === level && styles.difficultyButtonActive,
-                          { backgroundColor: getDifficultyColor(level).bg }
+                          { borderColor: getDifficultyColor(level).text }
                         ]}
                         onPress={() => setFormData({ ...formData, difficulty: level })}
                       >
@@ -358,40 +328,19 @@ export const TaskScreen = ({ navigation }) => {
                           styles.difficultyButtonText,
                           { color: getDifficultyColor(level).text }
                         ]}>
-                          {level.charAt(0).toUpperCase() + level.slice(1)}
+                          {level.toUpperCase()}
                         </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </View>
-
-                {/* Notes */}
-                {/* <View style={styles.inputGroup}>
-                  <Text style={styles.inputLabel}>Notes (Optional)</Text>
-                  <TextInput
-                    style={[styles.input, styles.textArea]}
-                    value={formData.notes}
-                    onChangeText={(text) => setFormData({ ...formData, notes: text })}
-                    placeholder="Add any additional notes..."
-                    placeholderTextColor={COLORS.textLighter}
-                    multiline
-                    numberOfLines={3}
-                  />
-                </View> */}
               </View>
             </ScrollView>
 
-            <TouchableOpacity onPress={handleAddTask}>
-              <LinearGradient
-                colors={[COLORS.gradient1, COLORS.gradient2]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.submitButton}
-              >
-                <Text style={styles.submitButtonText}>
-                  {editingTask ? 'Update Task' : 'Create Task'}
-                </Text>
-              </LinearGradient>
+            <TouchableOpacity onPress={handleAddTask} style={styles.submitButton}>
+              <Text style={styles.submitButtonText}>
+                {editingTask ? 'UPDATE DIRECTIVE' : 'INITIATE MISSION'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -407,74 +356,63 @@ const TaskCard = ({ task, onToggleComplete, onEdit, onDelete, getDifficultyColor
   return (
     <View style={[styles.taskCard, task.completed && styles.taskCardCompleted]}>
       <View style={styles.taskContent}>
-        {/* Checkbox */}
         <TouchableOpacity
           style={[styles.checkbox, task.completed && styles.checkboxChecked]}
           onPress={() => onToggleComplete(task.id)}
         >
           {task.completed && (
-            <Ionicons name="checkmark" size={18} color={COLORS.white} />
+            <Ionicons name="checkmark" size={18} color={COLORS.primary} />
           )}
         </TouchableOpacity>
 
-        {/* Task Info */}
         <View style={styles.taskInfo}>
           <Text style={[styles.taskTitle, task.completed && styles.taskTitleCompleted]}>
-            {task.title}
+            [ {task.title.toUpperCase()} ]
           </Text>
 
-          {/* Date, Time, Difficulty */}
           <View style={styles.taskMeta}>
             <View style={styles.taskMetaItem}>
-              <Ionicons name="calendar-outline" size={14} color={COLORS.textLight} />
+              <Ionicons name="radio-outline" size={14} color={COLORS.primary} />
               <Text style={styles.taskMetaText}>
-                {new Date(task.date).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                STATED: {task.date}
               </Text>
             </View>
-            <View style={styles.taskMetaItem}>
-              <Ionicons name="time-outline" size={14} color={COLORS.textLight} />
-              <Text style={styles.taskMetaText}>{task.time}</Text>
-            </View>
-            <View style={[styles.difficultyBadge, { backgroundColor: difficultyStyle.bg }]}>
+            <View style={[styles.difficultyBadge, { borderColor: difficultyStyle.text, borderWidth: 1 }]}>
               <Text style={[styles.difficultyBadgeText, { color: difficultyStyle.text }]}>
-                {task.difficulty}
+                LVL: {task.difficulty.toUpperCase()}
               </Text>
             </View>
           </View>
 
-          {/* Exercises */}
           <View style={styles.exerciseList}>
             {task.exercises.map((exercise, idx) => (
               <View key={idx} style={styles.exerciseChip}>
-                <Ionicons name="barbell" size={10} color={COLORS.primary} />
-                <Text style={styles.exerciseChipText}>{exercise}</Text>
+                <Text style={styles.exerciseChipText}> {">> " + exercise.toUpperCase()}</Text>
               </View>
             ))}
           </View>
 
-          {/* Actions */}
           <View style={styles.taskActions}>
-            {/* <TouchableOpacity
+            <TouchableOpacity
               style={styles.startButton}
-              onPress={() => navigation.navigate('Home')}
+              onPress={() => navigation.navigate('STATUS', { 
+                prefillExercises: task.exercises,
+                routineName: task.title 
+              })}
             >
-              <Ionicons name="play" size={14} color={COLORS.primary} />
-              <Text style={styles.startButtonText}>Start Workout</Text>
-            </TouchableOpacity> */}
+              <Text style={styles.startButtonText}>{"> DEPLOY"}</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => onEdit(task)}
             >
-              <Ionicons name="pencil" size={16} color={COLORS.textLight} />
+              <Ionicons name="settings-outline" size={16} color={COLORS.primary} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionButton}
               onPress={() => onDelete(task.id)}
             >
-              <Ionicons name="trash-outline" size={16} color={COLORS.danger} />
+              <Ionicons name="trash" size={16} color={COLORS.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -488,12 +426,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scanline: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 255, 65, 0.03)',
+    zIndex: 999,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.lg,
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.primary,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
   },
   titleRow: {
     flexDirection: 'row',
@@ -501,235 +451,218 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   title: {
-    fontSize: SIZES.xxxl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.xl,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    letterSpacing: 1,
   },
   subtitle: {
-    fontSize: SIZES.md,
-    color: COLORS.textLight,
-    marginTop: SPACING.xs,
+    fontSize: 10,
+    color: COLORS.primary,
+    fontWeight: 'bold',
+    opacity: 0.8,
   },
   addButton: {
-    backgroundColor: COLORS.primary,
-    width: 56,
-    height: 56,
-    borderRadius: RADIUS.full,
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.sm,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
   },
-
-  // Stats
   statsContainer: {
     flexDirection: 'row',
     paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.lg,
     gap: SPACING.md,
     marginBottom: SPACING.xl,
   },
   statCard: {
     flex: 1,
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderRadius: RADIUS.sm,
     padding: SPACING.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  statIconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.xs,
-    marginBottom: SPACING.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.3)',
   },
   statLabel: {
-    fontSize: SIZES.sm,
-    fontWeight: '600',
-    color: COLORS.textLight,
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    opacity: 0.7,
   },
   statValue: {
-    fontSize: SIZES.xxxl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.xl,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
-
-  // Filters
   filterContainer: {
     flexDirection: 'row',
     paddingHorizontal: SPACING.xl,
-    gap: SPACING.md,
-    marginBottom: SPACING.xl,
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
   },
   filterButton: {
     flex: 1,
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.xs,
     paddingHorizontal: SPACING.md,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.white,
+    borderRadius: RADIUS.sm,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.3)',
     alignItems: 'center',
   },
   filterButtonActive: {
-    backgroundColor: COLORS.primary,
-  },
-  filterButtonActivePending: {
-    backgroundColor: COLORS.warning,
-  },
-  filterButtonActiveCompleted: {
-    backgroundColor: COLORS.success,
+    backgroundColor: 'rgba(0, 255, 65, 0.2)',
+    borderColor: COLORS.primary,
   },
   filterText: {
-    fontSize: SIZES.md,
-    fontWeight: '600',
-    color: COLORS.textLight,
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    opacity: 0.7,
   },
   filterTextActive: {
-    color: COLORS.white,
+    opacity: 1,
   },
-
-  // Task List
   taskList: {
     paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxxl,
+    paddingBottom: SPACING.xl,
   },
   taskCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
+    backgroundColor: 'rgba(0, 255, 65, 0.02)',
+    borderRadius: RADIUS.sm,
     padding: SPACING.lg,
     marginBottom: SPACING.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.2)',
   },
   taskCardCompleted: {
-    opacity: 0.7,
+    opacity: 0.5,
   },
   taskContent: {
     flexDirection: 'row',
     gap: SPACING.md,
   },
   checkbox: {
-    width: 28,
-    height: 28,
-    borderRadius: RADIUS.md,
-    borderWidth: 2,
-    borderColor: COLORS.border,
+    width: 24,
+    height: 24,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 4,
   },
   checkboxChecked: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
+    backgroundColor: 'rgba(0, 255, 65, 0.2)',
   },
   taskInfo: {
     flex: 1,
   },
   taskTitle: {
-    fontSize: SIZES.lg,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
     marginBottom: SPACING.sm,
   },
   taskTitleCompleted: {
     textDecorationLine: 'line-through',
-    color: COLORS.textLight,
   },
   taskMeta: {
     flexDirection: 'row',
     gap: SPACING.md,
     marginBottom: SPACING.md,
+    alignItems: 'center',
   },
   taskMetaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.xs,
+    gap: 4,
   },
   taskMetaText: {
-    fontSize: SIZES.sm,
-    color: COLORS.textLight,
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    opacity: 0.6,
   },
   difficultyBadge: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: RADIUS.full,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 2,
   },
   difficultyBadgeText: {
-    fontSize: SIZES.xs,
-    fontWeight: '600',
+    fontSize: 8,
+    fontWeight: 'bold',
   },
   exerciseList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: SPACING.xs,
+    gap: 2,
     marginBottom: SPACING.md,
   },
   exerciseChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-    borderRadius: RADIUS.md,
+    paddingVertical: 2,
   },
   exerciseChipText: {
-    fontSize: SIZES.xs,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: 'bold',
     color: COLORS.primary,
+    opacity: 0.8,
   },
   taskActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
+    gap: SPACING.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0, 255, 65, 0.1)',
+    paddingTop: SPACING.sm,
   },
   startButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    borderRadius: RADIUS.md,
+    paddingVertical: 4,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
   },
   startButtonText: {
-    fontSize: SIZES.sm,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: 'bold',
     color: COLORS.primary,
   },
   actionButton: {
-    padding: SPACING.xs,
+    padding: 2,
   },
-
-  // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(4, 18, 7, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.xl,
   },
   modalContent: {
-    backgroundColor: COLORS.white,
-    borderTopLeftRadius: RADIUS.xl * 2,
-    borderTopRightRadius: RADIUS.xl * 2,
+    backgroundColor: COLORS.cardBg,
+    borderRadius: RADIUS.sm,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
     padding: SPACING.xl,
-    maxHeight: '90%',
+    width: '100%',
+    maxWidth: 400,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: SPACING.xl,
+    paddingBottom: SPACING.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary,
   },
   modalTitle: {
-    fontSize: SIZES.xxl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   modalBody: {
     marginBottom: SPACING.xl,
@@ -738,19 +671,20 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   inputLabel: {
-    fontSize: SIZES.md,
-    fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    marginBottom: 4,
   },
   input: {
-    backgroundColor: COLORS.background,
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
     padding: SPACING.md,
     fontSize: SIZES.base,
-    color: COLORS.text,
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
   textArea: {
     minHeight: 80,
@@ -769,44 +703,47 @@ const styles = StyleSheet.create({
   },
   difficultyButton: {
     flex: 1,
-    paddingVertical: SPACING.md,
-    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: RADIUS.sm,
     alignItems: 'center',
+    borderWidth: 1,
   },
   difficultyButtonActive: {
-    borderWidth: 2,
-    borderColor: COLORS.primary,
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   difficultyButtonText: {
-    fontSize: SIZES.sm,
-    fontWeight: '600',
+    fontSize: 9,
+    fontWeight: 'bold',
   },
   submitButton: {
-    borderRadius: RADIUS.md,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
     padding: SPACING.lg,
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   submitButtonText: {
-    color: COLORS.white,
-    fontSize: SIZES.lg,
-    fontWeight: '700',
+    color: COLORS.primary,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
   },
-
-  // Empty State
   emptyState: {
     alignItems: 'center',
-    paddingVertical: SPACING.xxxl * 2,
+    paddingVertical: SPACING.xxxl,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
   },
   emptyText: {
-    fontSize: SIZES.xl,
-    fontWeight: '600',
-    color: COLORS.textLight,
-    marginTop: SPACING.lg,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   emptySubtext: {
-    fontSize: SIZES.md,
-    color: COLORS.textLighter,
-    marginTop: SPACING.sm,
-    textAlign: 'center',
+    fontSize: 9,
+    color: COLORS.primary,
+    marginTop: 4,
+    opacity: 0.7,
   },
 });

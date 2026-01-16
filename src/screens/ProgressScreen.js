@@ -7,13 +7,17 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { LineChart } from 'react-native-chart-kit';
 import { useWorkouts } from '../hooks/useWorkouts';
-import { calculateStats, getUniqueExercises } from '../utils/calculations';
+import { calculateStats, getUniqueExercises, getChartData } from '../utils/calculations';
 import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
+
+const screenWidth = Dimensions.get("window").width;
 
 // Progress Bar Component
 const ProgressBar = ({current, goal, label}) => {
@@ -23,29 +27,26 @@ const ProgressBar = ({current, goal, label}) => {
     return (
         <View style={styles.progressBarContainer}>
       <View style={styles.progressBarHeader}>
-        <Text style={styles.progressBarLabel}>{label}</Text>
+        <Text style={styles.progressBarLabel}>{label.toUpperCase()}</Text>
         <Text style={styles.progressBarValue}>
           {current} / {goal}
         </Text>
       </View>
       <View style={styles.progressBarTrack}>
-        <LinearGradient
-          colors={isComplete ? ['#10B981', '#059669'] : [COLORS.gradient1, COLORS.gradient2]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[styles.progressBarFill, { width: `${percentage}%` }]}
-        >
-          {isComplete && (
-            <Ionicons name="checkmark-circle" size={12} color={COLORS.white} />
-          )}
-        </LinearGradient>
+        <View
+          style={[
+            styles.progressBarFill, 
+            { width: `${percentage}%` },
+            isComplete && { backgroundColor: COLORS.primary }
+          ]}
+        />
       </View>
       <View style={styles.progressBarFooter}>
-        <Text style={styles.progressBarPercentage}>{percentage.toFixed(0)}% Complete</Text>
+        <Text style={styles.progressBarPercentage}>{percentage.toFixed(0)}% LOADED</Text>
         {isComplete && (
           <View style={styles.achievedBadge}>
-            <Ionicons name="trophy" size={10} color={COLORS.success} />
-            <Text style={styles.achievedText}>Goal Achieved!</Text>
+            <Ionicons name="checkmark-sharp" size={10} color={COLORS.primary} />
+            <Text style={styles.achievedText}>TARGET ACHIEVED</Text>
           </View>
         )}
       </View>
@@ -54,26 +55,13 @@ const ProgressBar = ({current, goal, label}) => {
 };
 
 // Goal Card Component
-const GoalCard = ({ exercise, stats, goals, onEditGoals }) => {
+const GoalCard = ({ exercise, stats, goals, onEditGoals, workouts }) => {
+  const chartData = getChartData(workouts, exercise);
+  
   const allGoalsComplete =
     stats.maxWeight >= goals.targetWeight &&
     stats.totalVolume >= goals.targetVolume &&
     stats.count >= goals.targetSessions;
-
-  const milestones = [
-    {
-      completed: stats.maxWeight >= goals.targetWeight,
-      label: `Lift ${goals.targetWeight} lbs`,
-    },
-    {
-      completed: stats.totalVolume >= goals.targetVolume,
-      label: `Achieve ${goals.targetVolume.toLocaleString()} lbs total volume`,
-    },
-    {
-      completed: stats.count >= goals.targetSessions,
-      label: `Complete ${goals.targetSessions} training sessions`,
-    },
-  ];
 
   return (
     <View style={[styles.goalCard, allGoalsComplete && styles.goalCardComplete]}>
@@ -81,52 +69,81 @@ const GoalCard = ({ exercise, stats, goals, onEditGoals }) => {
       <View style={styles.goalCardHeader}>
         <View style={styles.goalCardTitleRow}>
           <View style={styles.goalIconContainer}>
-            <Ionicons name="fitness" size={24} color={COLORS.primary} />
+            <Ionicons name="scan-outline" size={24} color={COLORS.primary} />
           </View>
           <View>
-            <Text style={styles.goalCardTitle}>{exercise}</Text>
-            <Text style={styles.goalCardSubtitle}>Track your goals</Text>
+            <Text style={styles.goalCardTitle}>[ {exercise.toUpperCase()} ]</Text>
+            <Text style={styles.goalCardSubtitle}>V.A.T.S. TARGET ANALYSIS</Text>
           </View>
         </View>
         <View style={styles.goalCardHeaderRight}>
           {allGoalsComplete && (
             <View style={styles.completeBadge}>
-              <Ionicons name="trophy" size={16} color={COLORS.success} />
-              <Text style={styles.completeText}>Complete!</Text>
+              <Ionicons name="shield-checkmark" size={16} color={COLORS.primary} />
+              <Text style={styles.completeText}>OPTIMIZED</Text>
             </View>
           )}
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => onEditGoals(exercise)}
           >
-            <Ionicons name="pencil" size={18} color={COLORS.textLight} />
+            <Ionicons name="settings-outline" size={18} color={COLORS.primary} />
           </TouchableOpacity>
         </View>
       </View>
 
+      {/* Chart */}
+      {chartData && chartData.labels.length > 1 && (
+        <View style={styles.chartContainer}>
+          <LineChart
+            data={chartData}
+            width={screenWidth - SPACING.xl * 4 - 32}
+            height={180}
+            chartConfig={{
+              backgroundColor: 'transparent',
+              backgroundGradientFrom: COLORS.cardBg,
+              backgroundGradientTo: COLORS.cardBg,
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(0, 255, 65, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 255, 65, ${opacity})`,
+              style: {
+                borderRadius: 0
+              },
+              propsForDots: {
+                r: "3",
+                strokeWidth: "1",
+                stroke: COLORS.primary
+              },
+              propsForBackgroundLines: {
+                stroke: 'rgba(0, 255, 65, 0.1)',
+                strokeDasharray: '0',
+              }
+            }}
+            bezier
+            style={styles.chart}
+          />
+          <Text style={styles.chartTitle}>PROGRESS_GRAPH: MAX_WT_THROUGHPUT</Text>
+        </View>
+      )}
+
       {/* Current Stats */}
-      <LinearGradient
-        colors={['#EEF2FF', '#F3E8FF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.statsGrid}
-      >
+      <View style={styles.statsGrid}>
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Max Weight</Text>
+          <Text style={styles.statLabel}>MAX_WT</Text>
           <Text style={styles.statValue}>{stats.maxWeight}</Text>
-          <Text style={styles.statUnit}>lbs</Text>
+          <Text style={styles.statUnit}>LBS</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Total Volume</Text>
-          <Text style={styles.statValue}>{(stats.totalVolume / 1000).toFixed(1)}k</Text>
-          <Text style={styles.statUnit}>lbs</Text>
+          <Text style={styles.statLabel}>VOLUME</Text>
+          <Text style={styles.statValue}>{(stats.totalVolume / 1000).toFixed(1)}K</Text>
+          <Text style={styles.statUnit}>LBS</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Sessions</Text>
-          <Text style={styles.statValue}>{stats.count}</Text>
-          <Text style={styles.statUnit}>total</Text>
+          <Text style={styles.statLabel}>LOGS</Text>
+          <Text style={styles.statValue}>{stats.count.toString().padStart(2, '0')}</Text>
+          <Text style={styles.statUnit}>TOTAL</Text>
         </View>
-      </LinearGradient>
+      </View>
 
       {/* Progress Bars */}
       <View style={styles.progressSection}>
@@ -170,63 +187,59 @@ const EditGoalsModal = ({ visible, exercise, currentGoals, onClose, onSave }) =>
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType="none"
       transparent={true}
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Set Goals for {exercise}</Text>
+            <Text style={styles.modalTitle}>[ MODIFY_GOALS: {exercise?.toUpperCase()} ]</Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={COLORS.text} />
+              <Ionicons name="close" size={24} color={COLORS.primary} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.modalBody}>
             <View style={styles.modalInputGroup}>
-              <Text style={styles.modalLabel}>Target Weight (lbs)</Text>
+              <Text style={styles.modalLabel}>TARGET_WEIGHT (LBS)</Text>
               <TextInput
                 style={styles.modalInput}
                 value={goals.targetWeight.toString()}
                 onChangeText={(text) => setGoals({ ...goals, targetWeight: text })}
                 keyboardType="numeric"
-                placeholder="e.g., 185"
+                placeholder="000"
+                placeholderTextColor="rgba(0, 255, 65, 0.3)"
               />
             </View>
 
             <View style={styles.modalInputGroup}>
-              <Text style={styles.modalLabel}>Target Volume (lbs)</Text>
+              <Text style={styles.modalLabel}>TARGET_VOLUME (LBS)</Text>
               <TextInput
                 style={styles.modalInput}
                 value={goals.targetVolume.toString()}
                 onChangeText={(text) => setGoals({ ...goals, targetVolume: text })}
                 keyboardType="numeric"
-                placeholder="e.g., 15000"
+                placeholder="00000"
+                placeholderTextColor="rgba(0, 255, 65, 0.3)"
               />
             </View>
 
             <View style={styles.modalInputGroup}>
-              <Text style={styles.modalLabel}>Target Sessions</Text>
+              <Text style={styles.modalLabel}>TARGET_SESSIONS</Text>
               <TextInput
                 style={styles.modalInput}
                 value={goals.targetSessions.toString()}
                 onChangeText={(text) => setGoals({ ...goals, targetSessions: text })}
                 keyboardType="numeric"
-                placeholder="e.g., 10"
+                placeholder="00"
+                placeholderTextColor="rgba(0, 255, 65, 0.3)"
               />
             </View>
           </View>
 
-          <TouchableOpacity onPress={handleSave}>
-            <LinearGradient
-              colors={[COLORS.gradient1, COLORS.gradient2]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.modalButton}
-            >
-              <Text style={styles.modalButtonText}>Save Goals</Text>
-            </LinearGradient>
+          <TouchableOpacity onPress={handleSave} style={styles.modalButton}>
+            <Text style={styles.modalButtonText}>EXECUTE MODIFICATION</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -239,7 +252,6 @@ export const ProgressScreen = () => {
   const { workouts } = useWorkouts();
   const exercises = getUniqueExercises(workouts);
 
-  // Default goals - in production, store these with AsyncStorage
   const [exerciseGoals, setExerciseGoals] = useState({
     'Bench Press': { targetWeight: 185, targetVolume: 15000, targetSessions: 10 },
     'Squats': { targetWeight: 225, targetVolume: 20000, targetSessions: 10 },
@@ -261,7 +273,6 @@ export const ProgressScreen = () => {
     });
   };
 
-  // Calculate overall progress
   const totalGoals = exercises.length * 3;
   const completedGoals = exercises.reduce((count, exercise) => {
     const stats = calculateStats(workouts, exercise);
@@ -279,13 +290,13 @@ export const ProgressScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.scanline} pointerEvents="none" />
       <View style={styles.header}>
         <View>
           <View style={styles.titleRow}>
-            <Ionicons name="trending-up" size={32} color={COLORS.primary} />
-            <Text style={styles.title}>Progress Tracker</Text>
+            <Text style={styles.title}>[ V.A.T.S. DATA ]</Text>
           </View>
-          <Text style={styles.subtitle}>Monitor your fitness goals</Text>
+          <Text style={styles.subtitle}>LONG-RANGE PROGRESS ANALYSIS</Text>
         </View>
       </View>
 
@@ -293,28 +304,24 @@ export const ProgressScreen = () => {
         {/* Overall Progress */}
         <View style={styles.overallProgressCard}>
           <View style={styles.overallProgressHeader}>
-            <Text style={styles.overallProgressTitle}>Overall Progress</Text>
+            <Text style={styles.overallProgressTitle}>SYSTEM_READINESS</Text>
             <View style={styles.overallProgressBadge}>
-              <Ionicons name="trophy" size={20} color={COLORS.primary} />
               <Text style={styles.overallProgressText}>
-                {completedGoals}/{totalGoals}
+                {completedGoals}/{totalGoals} TASKS
               </Text>
             </View>
           </View>
           <View style={styles.overallProgressBar}>
-            <LinearGradient
-              colors={[COLORS.primary, COLORS.secondary, '#EC4899']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[styles.overallProgressFill, { width: `${overallProgress}%` }]}
+            <View
+              style={[styles.overallProgressFill, { width: `${overallProgress}%`, backgroundColor: COLORS.primary }]}
             />
           </View>
           <View style={styles.overallProgressFooter}>
             <Text style={styles.overallProgressPercentage}>
-              {overallProgress.toFixed(0)}% Complete
+              {overallProgress.toFixed(0)}% OPTIMIZED
             </Text>
             <Text style={styles.overallProgressGoals}>
-              {completedGoals} goals achieved
+              TOTAL_GAINS: ACTIVE
             </Text>
           </View>
         </View>
@@ -322,10 +329,9 @@ export const ProgressScreen = () => {
         {/* Exercise Goal Cards */}
         {exercises.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="barbell-outline" size={64} color={COLORS.border} />
-            <Text style={styles.emptyText}>No exercise data yet</Text>
+            <Text style={styles.emptyText}>NO DATA IN BUFFER</Text>
             <Text style={styles.emptySubtext}>
-              Start logging workouts to track progress
+              INITIATE TRAINING TO POPULATE DATABASE
             </Text>
           </View>
         ) : (
@@ -343,13 +349,13 @@ export const ProgressScreen = () => {
                 stats={stats}
                 goals={goals}
                 onEditGoals={handleEditGoals}
+                workouts={workouts}
               />
             ) : null;
           })
         )}
       </ScrollView>
 
-      {/* Edit Goals Modal */}
       <EditGoalsModal
         visible={editModalVisible}
         exercise={editingExercise}
@@ -366,9 +372,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  scanline: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 255, 65, 0.03)',
+    zIndex: 999,
+  },
   header: {
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.lg,
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.primary,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
   },
   titleRow: {
     flexDirection: 'row',
@@ -376,31 +394,31 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   title: {
-    fontSize: SIZES.xxxl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.xl,
+    fontWeight: "bold",
+    color: COLORS.primary,
+    letterSpacing: 2,
   },
   subtitle: {
-    fontSize: SIZES.md,
-    color: COLORS.textLight,
+    fontSize: SIZES.xs,
+    color: COLORS.primary,
     marginTop: SPACING.xs,
+    fontWeight: 'bold',
+    opacity: 0.8,
   },
   scrollView: {
     flex: 1,
     paddingHorizontal: SPACING.xl,
+    paddingTop: SPACING.lg,
   },
   
-  // Overall Progress Card
   overallProgressCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
     padding: SPACING.xl,
     marginBottom: SPACING.xl,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   overallProgressHeader: {
     flexDirection: 'row',
@@ -409,29 +427,30 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   overallProgressTitle: {
-    fontSize: SIZES.xl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   overallProgressBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.xs,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
+    paddingVertical: 4,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
   },
   overallProgressText: {
-    fontSize: SIZES.md,
-    fontWeight: '700',
+    fontSize: SIZES.xs,
+    fontWeight: 'bold',
     color: COLORS.primary,
   },
   overallProgressBar: {
-    height: 16,
-    backgroundColor: COLORS.border,
-    borderRadius: RADIUS.full,
+    height: 12,
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
+    borderRadius: RADIUS.sm,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.3)',
   },
   overallProgressFill: {
     height: '100%',
@@ -442,31 +461,28 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
   },
   overallProgressPercentage: {
-    fontSize: SIZES.sm,
-    color: COLORS.textLight,
+    fontSize: 10,
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
   overallProgressGoals: {
-    fontSize: SIZES.sm,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: 'bold',
     color: COLORS.primary,
+    opacity: 0.7,
   },
 
-  // Goal Card
   goalCard: {
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
+    backgroundColor: 'rgba(0, 255, 65, 0.02)',
+    borderRadius: RADIUS.sm,
     padding: SPACING.xl,
     marginBottom: SPACING.lg,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.3)',
   },
   goalCardComplete: {
-    borderColor: COLORS.success,
+    borderColor: COLORS.primary,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
   },
   goalCardHeader: {
     flexDirection: 'row',
@@ -481,19 +497,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   goalIconContainer: {
-    backgroundColor: '#EEF2FF',
-    padding: SPACING.sm,
-    borderRadius: RADIUS.md,
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
+    padding: SPACING.xs,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
   },
   goalCardTitle: {
-    fontSize: SIZES.xl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   goalCardSubtitle: {
-    fontSize: SIZES.sm,
-    color: COLORS.textLight,
-    marginTop: 2,
+    fontSize: 10,
+    color: COLORS.primary,
+    opacity: 0.6,
+    fontWeight: 'bold',
   },
   goalCardHeaderRight: {
     flexDirection: 'row',
@@ -503,114 +522,126 @@ const styles = StyleSheet.create({
   completeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.xs,
-    backgroundColor: '#D1FAE5',
+    gap: 4,
+    backgroundColor: 'rgba(0, 255, 65, 0.2)',
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-    borderRadius: RADIUS.full,
+    paddingVertical: 2,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
   },
   completeText: {
-    fontSize: SIZES.xs,
-    fontWeight: '700',
-    color: COLORS.success,
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   editButton: {
-    padding: SPACING.xs,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.3)',
+    borderRadius: RADIUS.sm,
   },
 
-  // Stats Grid
   statsGrid: {
     flexDirection: 'row',
-    borderRadius: RADIUS.xl,
-    padding: SPACING.lg,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderRadius: RADIUS.sm,
+    padding: SPACING.md,
     marginBottom: SPACING.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.2)',
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
   },
   statLabel: {
-    fontSize: SIZES.xs,
-    color: COLORS.textLight,
-    marginBottom: SPACING.xs,
+    fontSize: 9,
+    color: COLORS.primary,
+    opacity: 0.7,
+    fontWeight: 'bold',
+    marginBottom: 2,
   },
   statValue: {
-    fontSize: SIZES.xxl,
-    fontWeight: '700',
+    fontSize: SIZES.lg,
+    fontWeight: 'bold',
     color: COLORS.primary,
   },
   statUnit: {
-    fontSize: SIZES.xs,
-    color: COLORS.textLight,
-    marginTop: 2,
+    fontSize: 8,
+    color: COLORS.primary,
+    opacity: 0.5,
+    fontWeight: 'bold',
   },
 
-  // Progress Section
   progressSection: {
-    marginBottom: SPACING.lg,
+    gap: SPACING.md,
   },
   progressBarContainer: {
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xs,
   },
   progressBarHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: SPACING.sm,
+    marginBottom: 4,
   },
   progressBarLabel: {
-    fontSize: SIZES.sm,
-    fontWeight: '600',
-    color: COLORS.text,
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   progressBarValue: {
-    fontSize: SIZES.sm,
-    fontWeight: '700',
+    fontSize: 10,
+    fontWeight: 'bold',
     color: COLORS.primary,
   },
   progressBarTrack: {
-    height: 12,
-    backgroundColor: COLORS.border,
-    borderRadius: RADIUS.full,
+    height: 8,
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
+    borderRadius: 2,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.2)',
   },
   progressBarFill: {
     height: '100%',
-    borderRadius: RADIUS.full,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'rgba(0, 255, 65, 0.6)',
   },
   progressBarFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: SPACING.xs,
+    marginTop: 2,
   },
   progressBarPercentage: {
-    fontSize: SIZES.xs,
-    color: COLORS.textLight,
+    fontSize: 8,
+    color: COLORS.primary,
+    fontWeight: 'bold',
+    opacity: 0.8,
   },
   achievedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
   },
   achievedText: {
-    fontSize: SIZES.xs,
-    fontWeight: '600',
-    color: COLORS.success,
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   
-  // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(4, 18, 7, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: SPACING.xl,
   },
   modalContent: {
-    backgroundColor: COLORS.white,
-    borderRadius: RADIUS.xl,
+    backgroundColor: COLORS.cardBg,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
     padding: SPACING.xl,
     width: '100%',
     maxWidth: 400,
@@ -620,11 +651,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: SPACING.xl,
+    paddingBottom: SPACING.md,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.primary,
   },
   modalTitle: {
-    fontSize: SIZES.xl,
-    fontWeight: '700',
-    color: COLORS.text,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
     flex: 1,
   },
   modalBody: {
@@ -634,46 +668,72 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   modalLabel: {
-    fontSize: SIZES.md,
-    fontWeight: '600',
-    color: COLORS.text,
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: COLORS.primary,
     marginBottom: SPACING.sm,
   },
   modalInput: {
-    backgroundColor: COLORS.background,
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.md,
+    backgroundColor: 'rgba(0, 255, 65, 0.05)',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
     padding: SPACING.md,
     fontSize: SIZES.base,
-    color: COLORS.text,
+    color: COLORS.primary,
+    fontWeight: 'bold',
   },
   modalButton: {
-    borderRadius: RADIUS.md,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
     padding: SPACING.lg,
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   modalButtonText: {
-    color: COLORS.white,
-    fontSize: SIZES.lg,
-    fontWeight: '700',
+    color: COLORS.primary,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
   },
 
-  // Empty State
   emptyState: {
     alignItems: 'center',
-    paddingVertical: SPACING.xxxl * 3,
+    paddingVertical: SPACING.xxxl,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: COLORS.primary,
+    borderRadius: RADIUS.sm,
   },
   emptyText: {
-    fontSize: SIZES.xl,
-    fontWeight: '600',
-    color: COLORS.textLight,
-    marginTop: SPACING.lg,
+    fontSize: SIZES.md,
+    fontWeight: 'bold',
+    color: COLORS.primary,
   },
   emptySubtext: {
-    fontSize: SIZES.md,
-    color: COLORS.textLighter,
+    fontSize: 10,
+    color: COLORS.primary,
     marginTop: SPACING.sm,
     textAlign: 'center',
+    opacity: 0.7,
+  },
+
+  chartContainer: {
+    marginBottom: SPACING.xl,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 255, 65, 0.02)',
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 65, 0.1)',
+  },
+  chart: {
+    marginVertical: 8,
+  },
+  chartTitle: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: COLORS.primary,
+    marginTop: 4,
+    opacity: 0.6,
   },
 });
