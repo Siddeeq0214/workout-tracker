@@ -15,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { LineChart } from 'react-native-chart-kit';
 import { useWorkouts } from '../hooks/useWorkouts';
 import { calculateStats, getUniqueExercises, getChartData } from '../utils/calculations';
-import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
+import { COLORS, SIZES, SPACING, RADIUS, FONTS } from '../constants/colors';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -394,16 +394,16 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   title: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xl,
-    fontWeight: "bold",
     color: COLORS.primary,
     letterSpacing: 2,
   },
   subtitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xs,
     color: COLORS.primary,
     marginTop: SPACING.xs,
-    fontWeight: 'bold',
     opacity: 0.8,
   },
   scrollView: {
@@ -427,8 +427,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   overallProgressTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   overallProgressBadge: {
@@ -440,8 +440,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   overallProgressText: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xs,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   overallProgressBar: {
@@ -461,13 +461,13 @@ const styles = StyleSheet.create({
     marginTop: SPACING.sm,
   },
   overallProgressPercentage: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
     color: COLORS.primary,
-    fontWeight: 'bold',
   },
   overallProgressGoals: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: 'bold',
     color: COLORS.primary,
     opacity: 0.7,
   },
@@ -504,15 +504,15 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   goalCardTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   goalCardSubtitle: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
     color: COLORS.primary,
     opacity: 0.6,
-    fontWeight: 'bold',
   },
   goalCardHeaderRight: {
     flexDirection: 'row',
@@ -531,8 +531,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   completeText: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   editButton: {
@@ -556,22 +556,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statLabel: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
     color: COLORS.primary,
     opacity: 0.7,
-    fontWeight: 'bold',
     marginBottom: 2,
   },
   statValue: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.lg,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   statUnit: {
+    fontFamily: FONTS.bold,
     fontSize: 8,
     color: COLORS.primary,
     opacity: 0.5,
-    fontWeight: 'bold',
   },
 
   progressSection: {
@@ -586,13 +586,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   progressBarLabel: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   progressBarValue: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   progressBarTrack: {
@@ -614,9 +614,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   progressBarPercentage: {
+    fontFamily: FONTS.bold,
     fontSize: 8,
     color: COLORS.primary,
-    fontWeight: 'bold',
     opacity: 0.8,
   },
   achievedBadge: {
@@ -625,8 +625,8 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   achievedText: {
+    fontFamily: FONTS.bold,
     fontSize: 8,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   
@@ -656,8 +656,8 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.primary,
   },
   modalTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
     flex: 1,
   },
@@ -668,12 +668,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   modalLabel: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: 'bold',
     color: COLORS.primary,
     marginBottom: SPACING.sm,
   },
   modalInput: {
+    fontFamily: FONTS.bold,
     backgroundColor: 'rgba(0, 255, 65, 0.05)',
     borderWidth: 1,
     borderColor: COLORS.primary,
@@ -681,7 +682,6 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     fontSize: SIZES.base,
     color: COLORS.primary,
-    fontWeight: 'bold',
   },
   modalButton: {
     borderWidth: 2,
@@ -691,9 +691,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   modalButtonText: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
   },
 
   emptyState: {
@@ -705,11 +705,12 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
   },
   emptyText: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   emptySubtext: {
+    fontFamily: FONTS.regular,
     fontSize: 10,
     color: COLORS.primary,
     marginTop: SPACING.sm,
@@ -730,8 +731,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   chartTitle: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
     color: COLORS.primary,
     marginTop: 4,
     opacity: 0.6,

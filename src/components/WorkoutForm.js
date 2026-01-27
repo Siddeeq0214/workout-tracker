@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { COLORS, SIZES, SPACING, RADIUS } from "../constants/colors";
+import { COLORS, SIZES, SPACING, RADIUS, FONTS } from "../constants/colors";
 
 export const WorkoutForm = ({ onSubmit, onCancel }) => {
   const [exercise, setExercise] = useState("");
@@ -167,21 +167,22 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.primary,
   },
   title: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.lg,
-    fontWeight: "bold",
     color: COLORS.primary,
   },
   inputGroup: {
     marginBottom: SPACING.xl,
   },
   label: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: "bold",
     color: COLORS.primary,
     marginBottom: 4,
     opacity: 0.8,
   },
   input: {
+    fontFamily: FONTS.bold,
     backgroundColor: 'rgba(0, 255, 65, 0.05)',
     borderWidth: 1,
     borderColor: COLORS.primary,
@@ -189,7 +190,6 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     fontSize: SIZES.base,
     color: COLORS.primary,
-    fontWeight: 'bold',
   },
   setsHeader: {
     flexDirection: "row",
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   addSetText: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
-    fontWeight: "bold",
     fontSize: 10,
   },
   setRow: {
@@ -227,25 +227,25 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   setNumber: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
     fontSize: 10,
-    fontWeight: "bold",
   },
   setInputWrap: {
     flex: 1,
     alignItems: 'center',
   },
   fieldLabel: {
+    fontFamily: FONTS.bold,
     fontSize: 8,
-    fontWeight: 'bold',
     color: COLORS.primary,
     opacity: 0.5,
     marginBottom: 2,
   },
   setField: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
     color: COLORS.primary,
-    fontWeight: 'bold',
     textAlign: "center",
     width: '100%',
     padding: 2,
@@ -267,9 +267,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   submitButtonText: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
     fontSize: SIZES.md,
-    fontWeight: "bold",
     letterSpacing: 1,
   },
 });

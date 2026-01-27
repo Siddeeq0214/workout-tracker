@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WorkoutCard } from '../components/WorkoutCard';
 import { useWorkouts } from '../hooks/useWorkouts';
-import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
+import { COLORS, SIZES, SPACING, RADIUS, FONTS } from '../constants/colors';
 
 export const HistoryScreen = () => {
     const {workouts, removeWorkout} = useWorkouts();
@@ -15,7 +15,7 @@ export const HistoryScreen = () => {
     <Text style={styles.title}>[ ARCHIVE_DATA ]</Text>
     <Text style={styles.subtitle}>LONG-TERM MISSION LOG STORAGE</Text>
   </View>
-  <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+  <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} contentContainerStyle={{ paddingBottom: 100}}>
     {workouts.length === 0 ? (
       <View style={styles.emptyState}>
         <Text style={styles.emptyText}>NO ARCHIVES FOUND</Text>
@@ -57,16 +57,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 255, 65, 0.05)',
     },
     title: {
+        fontFamily: FONTS.bold,
         fontSize: SIZES.xl,
-        fontWeight: 'bold',
         color: COLORS.primary,
         letterSpacing: 2,
     },
     subtitle: {
+        fontFamily: FONTS.bold,
         fontSize: 10,
         color: COLORS.primary,
         marginTop: 4,
-        fontWeight: 'bold',
         opacity: 0.8,
     },
     scrollView: {
@@ -83,11 +83,12 @@ const styles = StyleSheet.create({
         borderRadius: RADIUS.sm,
     },
     emptyText: {
+        fontFamily: FONTS.bold,
         fontSize: SIZES.md,
-        fontWeight: 'bold',
         color: COLORS.primary,
     },
     emptySubtext: {
+        fontFamily: FONTS.regular,
         fontSize: 9,
         color: COLORS.primary,
         marginTop: 4,

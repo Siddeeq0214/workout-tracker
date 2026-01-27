@@ -14,7 +14,7 @@ import { WorkoutCard } from "../components/WorkoutCard";
 import { WorkoutForm } from "../components/WorkoutForm";
 import { useWorkouts } from "../hooks/useWorkouts";
 import { getTotalVolume } from "../utils/calculations";
-import { COLORS, SIZES, SPACING, RADIUS } from "../constants/colors";
+import { COLORS, SIZES, SPACING, RADIUS, FONTS } from "../constants/colors";
 
 const VAULT_BOY_IMAGE = require ("../assets/images/fallout-vault-boy.png");
 
@@ -70,7 +70,7 @@ export const HomeScreen = ({ navigation, route }) => {
       {/* Scanline Effect Overlay */}
       <View style={styles.scanline} pointerEvents="none" />
       
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100}}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerInfo}>
@@ -180,10 +180,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   loadingText: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
     marginTop: SPACING.md,
     fontSize: SIZES.sm,
-    fontWeight: 'bold',
   },
   header: {
     flexDirection: "row",
@@ -199,22 +199,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xl,
-    fontWeight: "bold",
     color: COLORS.primary,
     letterSpacing: 2,
   },
   terminalUser: {
+    fontFamily: FONTS.regular,
     fontSize: SIZES.xs,
     color: COLORS.primary,
     marginTop: SPACING.xs,
     opacity: 0.8,
   },
   subtitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xs,
     color: COLORS.primary,
     marginTop: 2,
-    fontWeight: 'bold',
   },
   vaultBoyHeader: {
     width: 60,
@@ -232,8 +233,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: "bold",
     color: COLORS.primary,
     letterSpacing: 1,
   },
@@ -252,18 +253,19 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
   },
   statLabel: {
+    fontFamily: FONTS.regular,
     fontSize: SIZES.xs,
-    fontWeight: "600",
     color: COLORS.primary,
     opacity: 0.7,
     marginBottom: SPACING.xs,
   },
   statValue: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xxl,
-    fontWeight: "bold",
     color: COLORS.primary,
   },
   statUnit: {
+    fontFamily: FONTS.regular,
     fontSize: SIZES.xs,
     color: COLORS.primary,
     marginTop: -4,
@@ -281,8 +283,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   terminalButtonText: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
-    fontWeight: 'bold',
     fontSize: SIZES.sm,
   },
   formContainer: {
@@ -296,8 +298,8 @@ const styles = StyleSheet.create({
     minHeight: 400,
   },
   viewAllText: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xs,
-    fontWeight: "bold",
     color: COLORS.primary,
     textDecorationLine: 'underline',
   },
@@ -311,11 +313,12 @@ const styles = StyleSheet.create({
     marginTop: SPACING.md,
   },
   emptyTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: "bold",
     color: COLORS.primary,
   },
   emptySubtitle: {
+    fontFamily: FONTS.regular,
     fontSize: SIZES.xs,
     color: COLORS.primary,
     marginTop: SPACING.sm,

@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
+import { COLORS, SIZES, SPACING, RADIUS, FONTS } from '../constants/colors';
 
 const TASKS_STORAGE_KEY = '@workout_tasks';
 
@@ -180,7 +180,7 @@ export const TaskScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100}}>
         {/* Stats Cards */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
@@ -451,15 +451,15 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   title: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xl,
-    fontWeight: 'bold',
     color: COLORS.primary,
     letterSpacing: 1,
   },
   subtitle: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
     color: COLORS.primary,
-    fontWeight: 'bold',
     opacity: 0.8,
   },
   addButton: {
@@ -488,14 +488,14 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 255, 65, 0.3)',
   },
   statLabel: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
     color: COLORS.primary,
     opacity: 0.7,
   },
   statValue: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xl,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   filterContainer: {
@@ -519,8 +519,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   filterText: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
     color: COLORS.primary,
     opacity: 0.7,
   },
@@ -563,8 +563,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   taskTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
     marginBottom: SPACING.sm,
   },
@@ -583,8 +583,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   taskMetaText: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
     color: COLORS.primary,
     opacity: 0.6,
   },
@@ -594,8 +594,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   difficultyBadgeText: {
+    fontFamily: FONTS.bold,
     fontSize: 8,
-    fontWeight: 'bold',
   },
   exerciseList: {
     gap: 2,
@@ -605,8 +605,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   exerciseChipText: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: 'bold',
     color: COLORS.primary,
     opacity: 0.8,
   },
@@ -627,8 +627,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   startButtonText: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   actionButton: {
@@ -660,8 +660,8 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.primary,
   },
   modalTitle: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   modalBody: {
@@ -671,12 +671,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   inputLabel: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
     color: COLORS.primary,
     marginBottom: 4,
   },
   input: {
+    fontFamily: FONTS.bold,
     backgroundColor: 'rgba(0, 255, 65, 0.05)',
     borderWidth: 1,
     borderColor: COLORS.primary,
@@ -684,7 +685,6 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     fontSize: SIZES.base,
     color: COLORS.primary,
-    fontWeight: 'bold',
   },
   textArea: {
     minHeight: 80,
@@ -712,8 +712,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   difficultyButtonText: {
+    fontFamily: FONTS.bold,
     fontSize: 9,
-    fontWeight: 'bold',
   },
   submitButton: {
     borderWidth: 2,
@@ -723,9 +723,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 255, 65, 0.1)',
   },
   submitButtonText: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
   },
   emptyState: {
     alignItems: 'center',
@@ -736,11 +736,12 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.sm,
   },
   emptyText: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
   },
   emptySubtext: {
+    fontFamily: FONTS.regular,
     fontSize: 9,
     color: COLORS.primary,
     marginTop: 4,

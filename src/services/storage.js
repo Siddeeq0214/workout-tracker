@@ -69,5 +69,36 @@ export const StorageService = {
             console.error('Error getting sessions: ', error);
             throw error;
         }
+    },
+
+    async getManualGoals() {
+        try {
+            const data = await AsyncStorage.getItem('@workout_tracker_manual_goals');
+            return data ? JSON.parse(data) : [];
+        } catch (error) {
+            console.error('Error getting manual goals: ', error);
+            throw error;
+        }
+    },
+
+    // Payment Management
+    async savePaymentDetails(details) {
+        try {
+            await AsyncStorage.setItem('@workout_tracker_payment', JSON.stringify(details));
+            return details;
+        } catch (error) {
+            console.error('Error saving payment details: ', error);
+            throw error;
+        }
+    },
+
+    async getPaymentDetails() {
+        try {
+            const data = await AsyncStorage.getItem('@workout_tracker_payment');
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error('Error getting payment details: ', error);
+            throw error;
+        }
     }
 };

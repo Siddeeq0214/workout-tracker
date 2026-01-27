@@ -45,3 +45,10 @@ export const RADIUS = {
   xl: 12,
   full: 9999,
 };
+
+export const FONTS = {
+  regular: 'MonofontoRegular',
+  bold: 'MonofontoBold',
+  italic: 'MonofontoItalic',
+  boldItalic: 'MonofontoBoldItalic',
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SIZES, SPACING, RADIUS } from '../constants/colors';
+import { COLORS, SIZES, SPACING, RADIUS, FONTS } from '../constants/colors';
 import { formatDate } from '../utils/calculations';
 
 export const WorkoutCard = ({ workout, onDelete }) => {
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   exercise: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.md,
-    fontWeight: 'bold',
     color: COLORS.primary,
     marginBottom: SPACING.sm,
     letterSpacing: 1,
@@ -94,20 +94,21 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   statText: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xs,
     color: COLORS.primary,
-    fontWeight: 'bold',
     opacity: 0.9,
   },
   separator: {
+    fontFamily: FONTS.regular,
     fontSize: SIZES.xs,
     color: COLORS.primary,
     opacity: 0.5,
   },
   weight: {
+    fontFamily: FONTS.bold,
     fontSize: SIZES.xs,
     color: COLORS.primary,
-    fontWeight: 'bold',
   },
   dateRow: {
     flexDirection: 'row',
@@ -118,10 +119,10 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.sm,
   },
   date: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
     color: COLORS.primary,
     opacity: 0.6,
-    fontWeight: 'bold',
   },
   deleteButton: {
     padding: SPACING.xs,
@@ -144,8 +145,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 255, 65, 0.3)',
   },
   setChipText: {
+    fontFamily: FONTS.bold,
     fontSize: 10,
     color: COLORS.primary,
-    fontWeight: 'bold',
   },
 });
