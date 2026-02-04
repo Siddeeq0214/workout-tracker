@@ -1,6 +1,6 @@
 # Pip-Boy 3000: Workout Tracker
 
-A Fallout-inspired (Pip-Boy) workout tracking application built with **React Native** and **Expo**. Track your physical "S.P.E.C.I.A.L." statistics, archive mission logs, and manage vault memberships with a classic green-phosphor terminal aesthetic.
+A Fallout-inspired (Pip-Boy) workout tracking application built with **React Native** and **Expo**. Track your weekly workout routine, archive workouts, and manage gym memberships with a classic green terminal aesthetic.
 
 ## Features
 
