@@ -15,7 +15,7 @@ export const HistoryScreen = () => {
     <Text style={styles.title}>[ ARCHIVE_DATA ]</Text>
     <Text style={styles.subtitle}>LONG-TERM MISSION LOG STORAGE</Text>
   </View>
-  <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} contentContainerStyle={{ paddingBottom: 100}}>
+  <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView} contentContainerStyle={{ paddingBottom: SPACING.xl }}>
     {workouts.length === 0 ? (
       <View style={styles.emptyState}>
         <Text style={styles.emptyText}>NO ARCHIVES FOUND</Text>

@@ -70,7 +70,7 @@ export const HomeScreen = ({ navigation, route }) => {
       {/* Scanline Effect Overlay */}
       <View style={styles.scanline} pointerEvents="none" />
       
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100}}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: SPACING.xl }}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerInfo}>

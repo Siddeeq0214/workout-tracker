@@ -131,39 +131,26 @@ export const PaymentScreen = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth(); // 0-11
+    const currentMonth = today.getMonth(); 
 
-    // 1. Determine the due date for the CURRENT calendar month
-    // We treat "billing by month" as: There is a bill due in Jan, Feb, Mar, etc.
     let targetDueDate = new Date(currentYear, currentMonth, data.dueDay);
     targetDueDate.setHours(0, 0, 0, 0);
 
-    // Handle month-end wrapping (e.g. Due day 31 in Feb)
-    // Date() automatically wraps 31st Feb to early March, which is technically "Next Month's" start
-    // We want to force it to be "End of this month" if it overflowed?
-    // Or just accept the JS Date behavior?
-    // Let's stick to standard behavior: If you set 31st, and it's Feb, it's due March 3rd. 
-    // This is weird. Better:
     if (targetDueDate.getMonth() !== currentMonth) {
-         // The day didn't exist in this month (e.g. 31st Feb). 
-         // Set to last day of current month?
          targetDueDate = new Date(currentYear, currentMonth + 1, 0); 
     }
 
-    // 2. check if we ALREADY paid for this month
+
     if (data.lastPaidDate) {
         const lastPaid = new Date(data.lastPaidDate);
         lastPaid.setHours(0, 0, 0, 0);
         
-        // Define "This Month's Window": The payment must be ON or AFTER the start of this month.
-        // If we paid anytime in Jan, we satisfy Jan's bill.
         const startOfCurrentMonth = new Date(currentYear, currentMonth, 1);
         
         if (lastPaid >= startOfCurrentMonth) {
-            // We paid for this month. Move target to next month.
+
             targetDueDate = new Date(currentYear, currentMonth + 1, data.dueDay);
-            
-            // Fix overflow for next month too
+
              if (targetDueDate.getMonth() !== (currentMonth + 1) % 12) {
                 targetDueDate = new Date(currentYear, currentMonth + 2, 0);
             }
@@ -313,7 +300,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
-    paddingBottom: SPACING.xxxl,
+    paddingBottom: 0,
   },
   center: {
     justifyContent: 'center',
@@ -355,7 +342,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: SPACING.xl,
-    paddingBottom: 100,
+    paddingBottom: SPACING.xl,
   },
   loadingText: {
     fontFamily: FONTS.bold,

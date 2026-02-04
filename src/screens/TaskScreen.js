@@ -180,7 +180,7 @@ export const TaskScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100}}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: SPACING.xl }}>
         {/* Stats Cards */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>

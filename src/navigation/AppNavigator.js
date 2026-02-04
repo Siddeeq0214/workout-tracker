@@ -1,12 +1,12 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { HomeScreen } from '../screens/HomeScreen';
-import { ProgressScreen } from '../screens/ProgressScreen';
-import { HistoryScreen } from '../screens/HistoryScreen';
-import { TaskScreen } from '../screens/TaskScreen';
-import { PaymentScreen } from '../screens/PaymentScreen';
-import { COLORS, FONTS } from '../constants/colors';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { HomeScreen } from "../screens/HomeScreen";
+import { ProgressScreen } from "../screens/ProgressScreen";
+import { HistoryScreen } from "../screens/HistoryScreen";
+import { TaskScreen } from "../screens/TaskScreen";
+import { PaymentScreen } from "../screens/PaymentScreen";
+import { COLORS, FONTS } from "../constants/colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,34 +18,30 @@ export default function AppNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'STATUS') {
-            iconName = focused ? 'terminal' : 'terminal-outline';
-          } else if (route.name === 'DATA') {
-            iconName = focused ? 'pulse' : 'pulse-outline';
-          } else if (route.name === 'ARCHIVE') {
-            iconName = focused ? 'library' : 'library-outline';
-          } else if (route.name === 'QUESTS') {
-            iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'MEMBERSHIP') {
-             iconName = focused ? 'card' : 'card-outline';
+          if (route.name === "STATUS") {
+            iconName = focused ? "terminal" : "terminal-outline";
+          } else if (route.name === "DATA") {
+            iconName = focused ? "pulse" : "pulse-outline";
+          } else if (route.name === "ARCHIVE") {
+            iconName = focused ? "library" : "library-outline";
+          } else if (route.name === "QUESTS") {
+            iconName = focused ? "list" : "list-outline";
+          } else if (route.name === "MEMBERSHIP") {
+            iconName = focused ? "card" : "card-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: 'rgba(0, 255, 65, 0.3)',
+        tabBarInactiveTintColor: "rgba(0, 255, 65, 0.3)",
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 20,
-          left: 20,
-          right: 20,
-          elevation: 5,
           backgroundColor: COLORS.background,
           paddingBottom: 16,
           paddingTop: 8,
-          height: 60,
+          height: 70,
           borderTopWidth: 2,
           borderTopColor: COLORS.primary,
+          elevation: 0, // Remove shadow for a flatter terminal look if desired
         },
         tabBarLabelStyle: {
           fontFamily: FONTS.bold,
