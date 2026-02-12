@@ -10,7 +10,7 @@ A Fallout-inspired (Pip-Boy) workout tracking application built with **React Nat
 - **Mission Statistics**: Track total training sessions and lift volume.
 - **Logging Sequence**: Initiate and record new exercise data directly into the vault.
 
-- <img width="359" height="800" alt="image" src="https://github.com/user-attachments/assets/ae725f80-e3a4-458f-84f2-7ed4e1f15331" />
+  <img width="359" height="800" alt="image" src="https://github.com/user-attachments/assets/ae725f80-e3a4-458f-84f2-7ed4e1f15331" />
 
 
 ### QUEST_LOG (Tasks)
@@ -19,7 +19,7 @@ A Fallout-inspired (Pip-Boy) workout tracking application built with **React Nat
 - **Threat Levels**: Categorize quests by difficulty (Easy, Medium, Hard).
 - **Deployment**: Quickly initiate a workout session from a pre-defined quest.
 
-- <img width="359" height="800" alt="image" src="https://github.com/user-attachments/assets/9368d15a-5eeb-4304-ab86-dcc17c2d0257" />
+  <img width="359" height="800" alt="image" src="https://github.com/user-attachments/assets/9368d15a-5eeb-4304-ab86-dcc17c2d0257" />
 
 ### MEMBERSHIP_LOG (Payments)
 
